@@ -2,12 +2,24 @@
 
 cscope_files="cscope.files"
 
+find_opt_exclude_dir="\( -type d -path './*.bak' -o -type d -path './*.tmp' \) -prune"
+find_opt_target_file="\( -name '*.c' -o -name '*.cpp' -o -name '*.cc' -o -name '*.h' -o -name '*.hh' -o -name '*.s' -o -name '*.S' \)"
+
+
+
+find_dir() {
+
+	# $1 : path , $2: cscope_file name
+#	find $1 ! \($find_opt_exclude_dir\)\) $find_opt_target_file -print >> $2
+	find $1 ! \( \( -type d -path '*.bak' -o -type d -path '*.tmp' \) -prune \) \( -name '*.c' -o -name '*.cpp' -o -name '*.cc' -o -name '*.h' -o -name '*.hh' -o -name '*.s' -o -name '*.S' \) -print >> $2
+}
+
 echo "Cscope making script."
 
 rm -rf $cscope_files
 touch $cscope_files
 
-echo "Find subdirectory files.."
+echo "Finding subdirectory files.."
 
 #find $PWD \( -name '*.c' -o -name '*.cpp' -o -name '*.cc' -o -name '*.h' -o -name '*.hh' -o -name '*.s' -o -name '*.S' \) -print > $cscope_files
 
@@ -15,7 +27,9 @@ echo "Find subdirectory files.."
 if [ -z $1 ]; then
 	cscope_out="cscope.out"
 	ctag_out="tags"
-	find $PWD \( -name '*.c' -o -name '*.cpp' -o -name '*.cc' -o -name '*.h' -o -name '*.hh' -o -name '*.s' -o -name '*.S' \) -print > $cscope_files
+	#find $PWD  \( -name '*.c' -o -name '*.cpp' -o -name '*.cc' -o -name '*.h' -o -name '*.hh' -o -name '*.s' -o -name '*.S' \) -print > $cscope_files
+	#find $PWD $find_opt_exclude_dir $find_opt_target_file -print > $cscope_files
+	find_dir $PWD $cscope_files
 else
 	cscope_out="$1_cscope.out"
 	ctag_out="$1_tags"
@@ -108,43 +122,53 @@ else
 
 	if [ ! "$bios_dir" = "empty_directory" ]; then
 		echo "Searching $bios_dir directory"
-		find $PWD$bios_dir \( -name '*.c' -o -name '*.cpp' -o -name '*.cc' -o -name '*.h' -o -name '*.hh' -o -name '*.s' -o -name '*.S' \) -print >> $cscope_files
+#		find $PWD$bios_dir \( -name '*.c' -o -name '*.cpp' -o -name '*.cc' -o -name '*.h' -o -name '*.hh' -o -name '*.s' -o -name '*.S' \) -print >> $cscope_files
+		find_dir $PWD$bios_dir  $cscope_files
 	fi
 
 	if [ ! "$board_dir" = "empty_directory" ]; then
 		echo "Searching $board_dir directory"
-		find $PWD$board_dir \( -name '*.c' -o -name '*.cpp' -o -name '*.cc' -o -name '*.h' -o -name '*.hh' -o -name '*.s' -o -name '*.S' \) -print >> $cscope_files
-		find $PWD$board_dir/../common \( -name '*.c' -o -name '*.cpp' -o -name '*.cc' -o -name '*.h' -o -name '*.hh' -o -name '*.s' -o -name '*.S' \) -print >> $cscope_files
+#		find $PWD$board_dir \( -name '*.c' -o -name '*.cpp' -o -name '*.cc' -o -name '*.h' -o -name '*.hh' -o -name '*.s' -o -name '*.S' \) -print >> $cscope_files
+#		find $PWD$board_dir/../common \( -name '*.c' -o -name '*.cpp' -o -name '*.cc' -o -name '*.h' -o -name '*.hh' -o -name '*.s' -o -name '*.S' \) -print >> $cscope_files
+		find_dir $PWD$board_dir $cscope_files
+		find_dir $PWD$board_dir/../common $cscope_files
+
 	fi
 
 	if [ ! "$kernel_dir" = "empty_directory" ]; then
 		echo "Searching $kernel_dir directory"
-		find $PWD$kernel_dir \( -name '*.c' -o -name '*.cpp' -o -name '*.cc' -o -name '*.h' -o -name '*.hh' -o -name '*.s' -o -name '*.S' \) -print >> $cscope_files
+		#find $PWD$kernel_dir \( -name '*.c' -o -name '*.cpp' -o -name '*.cc' -o -name '*.h' -o -name '*.hh' -o -name '*.s' -o -name '*.S' \) -print >> $cscope_files
+		find_dir $PWD$kernel_dir $cscope_files
 	fi
 
 	if [ ! "$driver_dir" = "empty_directory" ]; then
 		echo "Searching $driver_dir directory"
-		find $PWD$driver_dir \( -name '*.c' -o -name '*.cpp' -o -name '*.cc' -o -name '*.h' -o -name '*.hh' -o -name '*.s' -o -name '*.S' \) -print >> $cscope_files
+		#find $PWD$driver_dir \( -name '*.c' -o -name '*.cpp' -o -name '*.cc' -o -name '*.h' -o -name '*.hh' -o -name '*.s' -o -name '*.S' \) -print >> $cscope_files
+		find_dir $PWD$driver_dir $cscope_files
 	fi
 
 	if [ ! "$app_dir" = "empty_directory" ]; then
 		echo "Searching $app_dir directory"
-		find $PWD$app_dir \( -name '*.c' -o -name '*.cpp' -o -name '*.cc' -o -name '*.h' -o -name '*.hh' -o -name '*.s' -o -name '*.S' \) -print >> $cscope_files
+		#find $PWD$app_dir \( -name '*.c' -o -name '*.cpp' -o -name '*.cc' -o -name '*.h' -o -name '*.hh' -o -name '*.s' -o -name '*.S' \) -print >> $cscope_files
+		find_dir $PWD$app_dir $cscope_files
 	fi
 
 	if [ ! "$sdk_dir" = "empty_directory" ]; then
 		echo "Searching $sdk_dir directory"
-		find $PWD$sdk_dir \( -name '*.c' -o -name '*.cpp' -o -name '*.cc' -o -name '*.h' -o -name '*.hh' -o -name '*.s' -o -name '*.S' \) -print >> $cscope_files
+		#find $PWD$sdk_dir \( -name '*.c' -o -name '*.cpp' -o -name '*.cc' -o -name '*.h' -o -name '*.hh' -o -name '*.s' -o -name '*.S' \) -print >> $cscope_files
+		find_dir $PWD$sdk_dir $cscope_files
 	fi
 
 	if [ ! "$micom_dir" = "empty_directory" ]; then
 		echo "Searching $micom_dir directory"
-		find $PWD$micom_dir \( -name '*.c' -o -name '*.cpp' -o -name '*.cc' -o -name '*.h' -o -name '*.hh' -o -name '*.s' -o -name '*.S' \) -print >> $cscope_files
+		#find $PWD$micom_dir \( -name '*.c' -o -name '*.cpp' -o -name '*.cc' -o -name '*.h' -o -name '*.hh' -o -name '*.s' -o -name '*.S' \) -print >> $cscope_files
+		find_dir $PWD$micom_dir $cscope_files
 	fi
 
 	if [ ! "$font_dir" = "empty_directory" ]; then
 		echo "Searching $font_dir directory"
-		find $PWD$font_dir \( -name '*.c' -o -name '*.cpp' -o -name '*.cc' -o -name '*.h' -o -name '*.hh' -o -name '*.s' -o -name '*.S' \) -print >> $cscope_files
+		#find $PWD$font_dir \( -name '*.c' -o -name '*.cpp' -o -name '*.cc' -o -name '*.h' -o -name '*.hh' -o -name '*.s' -o -name '*.S' \) -print >> $cscope_files
+		find_dir $PWD$font_dir $cscope_files
 	fi
 	
 fi
