@@ -11,7 +11,7 @@ find_dir() {
 
 	# $1 : path , $2: cscope_file name
 #	find $1 ! \($find_opt_exclude_dir\)\) $find_opt_target_file -print >> $2
-	find $1 ! \( \( -type d -path '*.bak' -o -type d -path '*.tmp' \) -prune \) \( -name '*.c' -o -name '*.cpp' -o -name '*.cc' -o -name '*.h' -o -name '*.hh' -o -name '*.s' -o -name '*.S' \) -print >> $2
+	find $1 ! \( \( -type d -path '*.bak' -o -type d -path '*.tmp' -type d -path '.*' \) -prune \) \( -name '*.c' -o -name '*.cpp' -o -name '*.cc' -o -name '*.h' -o -name '*.hh' -o -name '*.s' -o -name '*.S' -o -name 'Makefile' \) -print >> $2
 }
 
 echo "Cscope making script."
@@ -184,7 +184,7 @@ echo "Delete old $ctag_out.."
 rm -rf $ctag_out
 echo "Make new $ctag_out.."
 
-ctags -f $ctag_out -L $cscope_files --c++-kinds=+p --fields=+iaS --extra=+q
-rm -rf $cscope_files
+/usr/bin/ctags -f $ctag_out -L $cscope_files --c++-kinds=+p --fields=+iaS --extra=+q
+#rm -rf $cscope_files
 
 echo "Done."
