@@ -11,7 +11,7 @@ find_dir() {
 
 	# $1 : path , $2: cscope_file name
 #	find $1 ! \($find_opt_exclude_dir\)\) $find_opt_target_file -print >> $2
-	find $1 ! \( \( -type d -path '*.bak' -o -type d -path '*.tmp' -type d -path '.*' \) -prune \) \( -name '*.c' -o -name '*.cpp' -o -name '*.cc' -o -name '*.h' -o -name '*.hh' -o -name '*.s' -o -name '*.S' -o -name 'Makefile' \) -print >> $2
+	find $1 ! \( \( -type d -path '*.bak' -o -type d -path '*.tmp' -type d -path '.*' -name '#*' \) -prune \) \( -name '*.c' -o -name '*.cpp' -o -name '*.cc' -o -name '*.h' -o -name '*.hh' -o -name '*.s' -o -name '*.S' -o -name 'Makefile' \) -print >> $2
 }
 
 echo "Cscope making script."
@@ -52,6 +52,8 @@ else
 	micom_dir="empty_directory"
 	sdk_dir="empty_directory"
 	font_dir="empty_directory"
+	util_dir="empty_directory"
+	onvif_dir="empty_directory"
 
 	while read line
 	do
@@ -66,6 +68,9 @@ else
 		micom_dir_tmp=`echo $line | grep "MCU_SRC_DIR"`
 		sdk_dir_tmp=`echo $line | grep "SDK_SRC_DIR"`
 		font_dir_tmp=`echo $line | grep "FONT_SRC_DIR"`
+		util_dir_tmp=`echo $line | grep "UTIL_DIR"`
+		onvif_dir_tmp=`echo $line | grep "ONVIF_SRC_DIR"`
+
 		if [ ! -z "$bios_dir_tmp" ]; then
 			if [ ! -z "`echo $line | grep "(PROJECT_BASE)"`" ]; then
 				bios_dir=${bios_dir_tmp#*(PROJECT_BASE)}
@@ -115,6 +120,19 @@ else
 				font_dir=${font_dir_tmp#*(PROJECT_BASE)}
 			fi
 		fi
+
+		if [ ! -z "$util_dir_tmp" ]; then
+			if [ ! -z "`echo $line | grep "(PROJECT_BASE)"`" ]; then
+				util_dir=${util_dir_tmp#*(PROJECT_BASE)}
+			fi
+		fi
+		if [ ! -z "$onvif_dir_tmp" ]; then
+			if [ ! -z "`echo $line | grep "(PROJECT_BASE)"`" ]; then
+				onvif_dir=${onvif_dir_tmp#*(PROJECT_BASE)}
+			fi
+		fi
+
+
 
 		done
 
@@ -170,6 +188,19 @@ else
 		#find $PWD$font_dir \( -name '*.c' -o -name '*.cpp' -o -name '*.cc' -o -name '*.h' -o -name '*.hh' -o -name '*.s' -o -name '*.S' \) -print >> $cscope_files
 		find_dir $PWD$font_dir $cscope_files
 	fi
+
+	if [ ! "$util_dir" = "empty_directory" ]; then
+		echo "Searching $util_dir directory"
+		#find $PWD$font_dir \( -name '*.c' -o -name '*.cpp' -o -name '*.cc' -o -name '*.h' -o -name '*.hh' -o -name '*.s' -o -name '*.S' \) -print >> $cscope_files
+		find_dir $PWD$util_dir $cscope_files
+	fi
+
+	if [ ! "$onvif_dir" = "empty_directory" ]; then
+		echo "Searching $onvif_dir directory"
+		#find $PWD$font_dir \( -name '*.c' -o -name '*.cpp' -o -name '*.cc' -o -name '*.h' -o -name '*.hh' -o -name '*.s' -o -name '*.S' \) -print >> $cscope_files
+		find_dir $PWD$onvif_dir $cscope_files
+	fi
+
 	
 fi
 
