@@ -1,6 +1,6 @@
 #!/bin/sh
 
-cscope_files="cscope.files"
+
 
 find_opt_exclude_dir="\( -type d -path './*.bak' -o -type d -path './*.tmp' \) -prune"
 find_opt_target_file="\( -name '*.c' -o -name '*.cpp' -o -name '*.cc' -o -name '*.h' -o -name '*.hh' -o -name '*.s' -o -name '*.S' \)"
@@ -11,13 +11,11 @@ find_dir() {
 
 	# $1 : path , $2: cscope_file name
 #	find $1 ! \($find_opt_exclude_dir\)\) $find_opt_target_file -print >> $2
-	find $1 ! \( \( -type d -path '*.bak' -o -type d -path '*.tmp' -type d -path '.*' -name '#*' \) -prune \) \( -name '*.c' -o -name '*.cpp' -o -name '*.cc' -o -name '*.h' -o -name '*.hh' -o -name '*.s' -o -name '*.S' -o -name 'Makefile' \) -print >> $2
+	find $1 ! \( \( -type d -path '*.bak' -o -type d -path '*.tmp' -type d -path '.*' -name '#*' -name '.*' \) -prune \) \( -name '*.c' -o -name '*.cpp' -o -name '*.cc' -o -name '*.h' -o -name '*.hh' -o -name '*.s' -o -name '*.S' -o -name 'Makefile' \) -print >> $2
 }
 
 echo "Cscope making script."
 
-rm -rf $cscope_files
-touch $cscope_files
 
 echo "Finding subdirectory files.."
 
@@ -25,15 +23,25 @@ echo "Finding subdirectory files.."
 
 
 if [ -z $1 ]; then
+	cscope_files="cscope.files"
 	cscope_out="cscope.out"
 	ctag_out="tags"
 	#find $PWD  \( -name '*.c' -o -name '*.cpp' -o -name '*.cc' -o -name '*.h' -o -name '*.hh' -o -name '*.s' -o -name '*.S' \) -print > $cscope_files
 	#find $PWD $find_opt_exclude_dir $find_opt_target_file -print > $cscope_files
+
+	rm -rf $cscope_files
+	touch $cscope_files
+
 	find_dir $PWD $cscope_files
 else
+	cscope_files="$1_cscope.files"
 	cscope_out="$1_cscope.out"
 	ctag_out="$1_tags"
 	pdr_project_file="$PWD/config/project.$1"
+
+	rm -rf $cscope_files
+	touch $cscope_files
+
 
 	if [ ! -e "$pdr_project_file" ]; then
 		echo "can not fid project.$1 file :" 
@@ -206,16 +214,20 @@ fi
 
 
 echo "Delete old $cscope_out.."
-rm -rf $cscope_out
+if [ -e "$cscope_out" ]; then
+	rm -rf $cscope_out
+fi
 
 echo "Make new $cscope_out.."
 
-cscope -f $cscope_out -i $cscope_files
+#cscope -f $cscope_out -i $cscope_files
 echo "Delete old $ctag_out.."
-rm -rf $ctag_out
+if [ -e "$ctag_out" ]; then
+	rm -rf $ctag_out
+fi
 echo "Make new $ctag_out.."
 
-/usr/bin/ctags -f $ctag_out -L $cscope_files --c++-kinds=+p --fields=+iaS --extra=+q
+#/usr/bin/ctags -f $ctag_out -L $cscope_files --c++-kinds=+p --fields=+iaS --extra=+q
 #rm -rf $cscope_files
 
 echo "Done."
