@@ -2,7 +2,7 @@
 
 
 
-find_opt_exclude_dir="\( -type d -path './*.bak' -o -type d -path './*.tmp' \) -prune"
+find_opt_exclude_dir="\( -type d -path './*.bak' -o -type d -path './*.tmp' -o -type d -path './.build' \) -prune"
 find_opt_target_file="\( -name '*.c' -o -name '*.cpp' -o -name '*.cc' -o -name '*.h' -o -name '*.hh' -o -name '*.s' -o -name '*.S' \)"
 
 
@@ -11,7 +11,7 @@ find_dir() {
 
 	# $1 : path , $2: cscope_file name
 #	find $1 ! \($find_opt_exclude_dir\)\) $find_opt_target_file -print >> $2
-	find $1 ! \( \( -type d -path '*.bak' -o -type d -path '*.tmp' -type d -path '.*' -name '#*' -name '.*' \) -prune \) \( -name '*.c' -o -name '*.cpp' -o -name '*.cc' -o -name '*.h' -o -name '*.hh' -o -name '*.s' -o -name '*.S' -o -name 'Makefile' \) -print >> $2
+	find $1 ! \( \( -type d -name '*.bak' -o -type d -name '*.tmp' -o -type d -name '.*' -o -type d -name 'build.*' -o -name '#*' -o -name '.*' \) -prune \) \( -name '*.c' -o -name '*.cpp' -o -name '*.cc' -o -name '*.h' -o -name '*.hh' -o -name '*.s' -o -name '*.S' -o -name 'Makefile' \) -print >> $2
 }
 
 echo "Cscope making script."
