@@ -8,10 +8,15 @@ find_opt_target_file="\( -name '*.c' -o -name '*.cpp' -o -name '*.cc' -o -name '
 
 
 find_dir() {
-
-	# $1 : path , $2: cscope_file name
+	cs_path=$1
+	cs_file=$2
+	
+	if [ $1 == "cw" ]; then
+		cs_path="$HOME/freescale/"
+	fi
+# $1 : path , $2: cscope_file name
 #	find $1 ! \($find_opt_exclude_dir\)\) $find_opt_target_file -print >> $2
-	find $1 ! \( \( -type d -name '*.bak' -o -type d -name '*.tmp' -o -type d -name '.*' -o -type d -name 'build.*' -o -name '#*' -o -name '.*' \) -prune \) \( -name '*.c' -o -name '*.cpp' -o -name '*.cc' -o -name '*.h' -o -name '*.hh' -o -name '*.s' -o -name '*.S' -o -name 'Makefile' \) -print >> $2
+	find "$cs_path" ! \( \( -type d -name '*.bak' -o -type d -name '*.tmp' -o -type d -name '.*' -o -type d -name 'build.*' -o -name '#*' -o -name '.*' \) -prune \) \( -name '*.c' -o -name '*.cpp' -o -name '*.cc' -o -name '*.h' -o -name '*.hh' -o -name '*.s' -o -name '*.S' -o -name 'Makefile' \) -print >> $cs_file
 }
 
 echo "Cscope making script."
@@ -21,18 +26,27 @@ echo "Finding subdirectory files.."
 
 #find $PWD \( -name '*.c' -o -name '*.cpp' -o -name '*.cc' -o -name '*.h' -o -name '*.hh' -o -name '*.s' -o -name '*.S' \) -print > $cscope_files
 
-
+	
 if [ -z $1 ]; then
 	cscope_files="cscope.files"
 	cscope_out="cscope.out"
 	ctag_out="tags"
-	#find $PWD  \( -name '*.c' -o -name '*.cpp' -o -name '*.cc' -o -name '*.h' -o -name '*.hh' -o -name '*.s' -o -name '*.S' \) -print > $cscope_files
-	#find $PWD $find_opt_exclude_dir $find_opt_target_file -print > $cscope_files
 
 	rm -rf $cscope_files
 	touch $cscope_files
 
 	find_dir $PWD $cscope_files
+elif [ $1 == "cw" ]; then
+	cscope_files="cscope.files"
+	cscope_out="cscope.out"
+	ctag_out="tags"
+
+	rm -rf $cscope_files
+	touch $cscope_files
+
+	find_dir $PWD $cscope_files
+	find_dir "cw" $cscope_files
+	
 else
 	cscope_files="$1_cscope.files"
 	cscope_out="$1_cscope.out"
